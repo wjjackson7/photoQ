@@ -9,6 +9,37 @@ function delete_tag_from_array(tag, array) {
   }
 }
 
+//testWHS2.js
+function getSuggestedTags()
+{
+  let input = document.getElementById('req-text');
+  let text = input.value;
+
+  if ( text.length <= 1
+    || ( getSuggestedTags.calls !== undefined && 1 < getSuggestedTags.calls+1 )
+  )
+  {
+    return;//do nothing
+  }
+
+  if ( getSuggestedTags.calls === undefined )
+  {
+    getSuggestedTags.calls = 1;
+  }
+
+  let tagTable = {};
+
+  let request = new XMLHttpRequest();
+  request.open('GET', '/query?autocomplete=' + text);
+  request.addEventListener(
+    'load',
+    function(){//callback function
+      tagTable = JSON.parse(request.responseText);
+    }
+  );
+  request.send();
+}
+
 // A react component for a tag
 class Tag extends React.Component {
 
@@ -23,18 +54,12 @@ class Tag extends React.Component {
           oReq.addEventListener("load", fnCallback);
           oReq.send();
 
-          function fnCallback(err) {
-            // no need to do anything here
-          }
+          function fnCallback(err) {}
 
           // alert("New tags: " + this.props.parentImage);
-
           parent.removeTag(this.props.text);
-
           event.stopPropagation();
-          // parentupdate(event,this.props.parentImageindexOf(this.props.text));
-          console.log(this.props);
-          // window.dispatchEvent(new Event('resize')); /* The world is held together with duct tape */
+          // console.log(this.props);
         }
       },
       React.createElement('p', {
@@ -42,6 +67,61 @@ class Tag extends React.Component {
       }, this.props.text));
     // contents
   }
+};
+
+// A react component for a tag
+class Input extends React.Component {
+  constructor() {
+		super();
+		this.handleChange = this.handleChange.bind(this);
+		this.state = {
+			content_add: "",
+			width: 100,
+			myItems: [],
+		};
+		this.lastId = -1;
+	}
+  handleChange(event) {
+		const usr_input = event.target.value;
+		this.setState({ content_add: usr_input });
+	}
+  render() {
+    return React.createElement(
+      "div",
+      {className: 'inputdiv'},
+      React.createElement("input", {
+        id: "add",
+        type: "text",
+        className: "inputtext",
+        onChange: this.handleChange,
+        value: this.state.content_add,
+        onClick: (event) => {
+          event.stopPropagation();
+        }
+      }),
+      React.createElement("button", {
+        className: 'addbutton',
+        label:'+',
+        onClick: (event) => {
+            var oReq = new XMLHttpRequest();
+            var input = this.state.content_add;
+            let parent = this.props.parent;
+            oReq.open("GET", "insert?key=" + this.props.parentImage + "~tag=" + input);
+            oReq.addEventListener("load", fnCallback);
+            oReq.send();
+            function fnCallback(err) {
+              // no need to do anything here
+            }
+            // console.log(input);
+            // console.log(this.props);
+            if(this.state.content_add!='')
+              parent.addTag(this.state.content_add);
+            event.stopPropagation();
+
+          },
+      }, '+')
+    );
+	}
 };
 
 
@@ -55,17 +135,20 @@ class TileControl extends React.Component {
     });
   }
 
+  addTag(tagname) {
+    var proptag = this.props.src.tags;
+    proptag.push(tagname);
+    console.log(proptag);
+    this.setState({
+      proptag: proptag
+    });
+  }
+
   render() {
-    // remember input vars in closure
     var _selected = this.props.selected;
     var the_tags = this.props.src.tags;
-    // var display_tags = this.props.tags;
 
     var name = this.props.src.src;
-
-    // parse image src for photo name
-    // var photoNames = _src.split("/").pop();
-    // photoNames = photoNames.split('%20'); //.join(' ');
     var args = [];
     args.push('div');
     args.push({
@@ -79,7 +162,13 @@ class TileControl extends React.Component {
       }));
 
     // add input box here
-    // args.push( React.createElement(input, value = , onChange = ) );
+    if(the_tags.length<6){
+      args.push( React.createElement(Input, {
+        value: "",
+        parentImage: name,
+        parent: this
+      }));
+    }
     return (React.createElement.apply(null, args));
   }
 };
@@ -172,8 +261,6 @@ function updateImages() {
   var reqIndices = document.getElementById("req-text").value;
 
   if (!reqIndices) return; // No query? Do nothing!
-
-  // console.log(reqIndices.replace(/,|,/g, "+")[0]);
 
   var terms = reqIndices.replace(/,|,/g, "+").split("+")
   for (let i = 0; i < terms.length; i++) {

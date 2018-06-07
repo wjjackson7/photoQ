@@ -482,7 +482,7 @@
 
 
   Gallery.defaultProps = {
-    columns: 3,
+    columns: 2,
     margin: 2
   };
 
