@@ -16,11 +16,11 @@
 // console.log(arrayContainsArray(sub, sup));
 
 
- function delete_tag_from_array(tag, array){
- var index  = array.indexOf(tag);
-      if (index > -1) {
-        array.splice(index, 1);
-      }
+function delete_tag_from_array(tag, array) {
+  var index = array.indexOf(tag);
+  if (index > -1) {
+    array.splice(index, 1);
+  }
 }
 
 
@@ -28,6 +28,5 @@ var del = 'mountain';
 var arr = ['tree', 'mountain', 'sky', 'apple'];
 
 
-delete_tag_from_array(del,arr);
+delete_tag_from_array(del, arr);
 console.log(arr);
-

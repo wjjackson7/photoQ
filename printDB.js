@@ -1,10 +1,10 @@
-var fs = require('fs');  // file access module
+var fs = require('fs'); // file access module
 var imgList = [];
 var h = [];
 var w = [];
 
-var http  = require('http');
-var sqlite3 = require("sqlite3").verbose();  // use sqlite
+var http = require('http');
+var sqlite3 = require("sqlite3").verbose(); // use sqlite
 var dbFileName = "PhotoQ.db";
 // Load the db
 var db = new sqlite3.Database(dbFileName);
@@ -21,18 +21,18 @@ dumpDB();
 
 
 function dumpDB() {
-	for(let i = 0; i < 988; i++){
-	  db.get( 'SELECT * FROM photoTags WHERE idNum = '+ i, dataCallback);
-	  function dataCallback( err, data ) {
-	    try{
+  for (let i = 0; i < 988; i++) {
+    db.get('SELECT * FROM photoTags WHERE idNum = ' + i, dataCallback);
 
-			console.log(data);
-			
-		}
-		catch(err){
-			console.log(i);
-		}
-		
-	    }
-	} 
+    function dataCallback(err, data) {
+      try {
+
+        console.log(data);
+
+      } catch (err) {
+        console.log(i);
+      }
+
+    }
+  }
 }

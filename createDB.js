@@ -1,5 +1,5 @@
 // Globals
-var sqlite3 = require("sqlite3").verbose();  // use sqlite
+var sqlite3 = require("sqlite3").verbose(); // use sqlite
 var fs = require("fs");
 
 var dbFileName = "PhotoQ.db";
@@ -11,15 +11,15 @@ var db = new sqlite3.Database(dbFileName);
 // Fix the error by removing or renaming PhotoQ.db
 // var cmdStr = 'CREATE TABLE photoTags VALUES ( _IDX, "_FILENAME", _WIDTH, _HEIGHT )';
 var cmdStr = "CREATE TABLE photoTags (idNum INTEGER UNIQUE NOT NULL PRIMARY KEY, fileName TEXT , landmark TEXT, tags TEXT[], width TEXT, height TEXT)";
-db.run(cmdStr,tableCreationCallback);
+db.run(cmdStr, tableCreationCallback);
 
 // Always use the callback for database operations and print out any
 // error messages you get.
 function tableCreationCallback(err) {
-    if (err) {
-	console.log("Table creation error",err);
-    } else {
-	console.log("Database created");
-	db.close();
-    }
+  if (err) {
+    console.log("Table creation error", err);
+  } else {
+    console.log("Database created");
+    db.close();
+  }
 }
